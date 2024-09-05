@@ -10,6 +10,7 @@ generator client {
 model User {
   id    String @id @default(cuid())
   email String @unique
+  role  String　@default("user")   // 役割フィールド (例: 'user', 'admin', 'moderator')
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

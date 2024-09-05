@@ -18,9 +18,10 @@ export const sessionStorage = createCookieSessionStorage({
 });
 
 const USER_SESSION_KEY = "userId";
+const USER_ROLE_KEY = "userRole"; // ユーザーロールのキーを追加
 
 export async function getSession(request: Request) {
-  const cookie = request.headers.get("Cookie");
+  const cookie = request.headers.get("Cookie") || "";
   return sessionStorage.getSession(cookie);
 }
 
@@ -30,6 +31,11 @@ export async function getUserId(
   const session = await getSession(request);
   const userId = session.get(USER_SESSION_KEY);
   return userId;
+}
+
+export async function getUserRole(request: Request): Promise<string | undefined> {
+  const session = await getSession(request);
+  return session.get(USER_ROLE_KEY);
 }
 
 export async function getUser(request: Request) {
@@ -63,19 +69,23 @@ export async function requireUser(request: Request) {
   throw await logout(request);
 }
 
+
 export async function createUserSession({
   request,
   userId,
+  role, // ロールを追加
   remember,
   redirectTo,
 }: {
   request: Request;
   userId: string;
+  role: string; // ロール
   remember: boolean;
   redirectTo: string;
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
+  session.set(USER_ROLE_KEY, role); // ロールをセッションに保存
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
@@ -94,4 +104,34 @@ export async function logout(request: Request) {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },
   });
+}
+
+export async function requireUserWithRole(
+  request: Request,
+  requiredRole: string,
+  redirectTo: string = "/login"
+) {
+  const userId = await requireUserId(request);
+  const userRole = await getUserRole(request);
+
+  if (!userRole || userRole !== requiredRole) {
+    throw redirect(redirectTo);
+  }
+
+  return { userId, userRole };
+}
+
+export async function loginUserAndRedirect({
+  request,
+  userId,
+  role,
+  remember,
+}: {
+  request: Request;
+  userId: string;
+  role: string;
+  remember: boolean;
+}) {
+  const redirectTo = role === "admin" ? "/admin/dashboard" : "/dashboard";
+  return createUserSession({ request, userId, role, remember, redirectTo });
 }

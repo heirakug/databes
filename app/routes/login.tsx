@@ -8,7 +8,7 @@ import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 
 import { verifyLogin } from "~/models/user.server";
-import { createUserSession, getUserId } from "~/session.server";
+import { createUserSession, getUserId, loginUserAndRedirect } from "~/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -21,7 +21,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  // const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
   const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
@@ -54,11 +54,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  return createUserSession({
-    redirectTo,
-    remember: remember === "on" ? true : false,
+  // return createUserSession({
+  //   redirectTo,
+  //   remember: remember === "on" ? true : false,
+  //   request,
+  //   userId: user.id,
+  //   role: user.role
+  // });
+  return loginUserAndRedirect({
     request,
     userId: user.id,
+    role: user.role,
+    remember: remember === "on",
   });
 };
 
@@ -66,7 +73,7 @@ export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  // const redirectTo = searchParams.get("redirectTo") || "/dashboard";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -137,8 +144,6 @@ export default function LoginPage() {
               ) : null}
             </div>
           </div>
-
-          <input type="hidden" name="redirectTo" value={redirectTo} />
           <button
             type="submit"
             className="w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"

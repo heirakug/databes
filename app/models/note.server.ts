@@ -14,6 +14,12 @@ export function getNote({
   });
 }
 
+export function getAllNote() {
+  return prisma.note.findMany({
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
 export function getNoteListItems({ userId }: { userId: User["id"] }) {
   return prisma.note.findMany({
     where: { userId },

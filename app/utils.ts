@@ -53,12 +53,23 @@ function isUser(user: unknown): user is User {
   );
 }
 
-export function useOptionalUser(): User | undefined {
+// export function useOptionalUser(): User | undefined {
+//   const data = useMatchesData("root");
+//   if (!data || !isUser(data.user)) {
+//     return undefined;
+//   }
+//   return data.user;
+// }
+
+// 拡張された useOptionalUser
+export function useOptionalUser(): { user?: User, role?: string } | undefined {
   const data = useMatchesData("root");
   if (!data || !isUser(data.user)) {
-    return undefined;
+    return { user: undefined, role: undefined };
   }
-  return data.user;
+
+  // ロール情報も返すようにする
+  return { user: data.user, role: data.user.role };
 }
 
 export function useUser(): User {
