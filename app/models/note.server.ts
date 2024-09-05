@@ -14,6 +14,15 @@ export function getNote({
   });
 }
 
+export function getNoteByAdmin({
+  id,
+}: Pick<Note, "id">) {
+  return prisma.note.findFirst({
+    select: { id: true, body: true, title: true },
+    where: { id }
+  });
+}
+
 export function getAllNote() {
   return prisma.note.findMany({
     orderBy: { updatedAt: "desc" },
@@ -54,5 +63,13 @@ export function deleteNote({
 }: Pick<Note, "id"> & { userId: User["id"] }) {
   return prisma.note.deleteMany({
     where: { id, userId },
+  });
+}
+
+export function deleteNoteByAdmin({
+  id,
+}: Pick<Note, "id">) {
+  return prisma.note.deleteMany({
+    where: { id },
   });
 }

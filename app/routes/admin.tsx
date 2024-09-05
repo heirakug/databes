@@ -31,7 +31,7 @@ export default function Admin() {
     <div className="flex h-full min-h-screen flex-col">
     <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
       <h1 className="text-3xl font-bold">
-        <Link to=".">管理画面</Link>
+        <Link to="/admin/dashboard">管理者画面</Link>
       </h1>
       <p>{user.email}</p>
       <Form action="/logout" method="post">
@@ -44,14 +44,7 @@ export default function Admin() {
       </Form>
     </header>
 
-    <main className="flex h-full bg-white">
-
-    <div>
-    <h1>管理者用管理画面</h1>
       <Outlet />
-    </div>
-
-    </main>
     </div>
   );
 }

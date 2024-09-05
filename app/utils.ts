@@ -85,3 +85,8 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export function pluralize(word: string): string {
+  if (!word || word.length === 0) return word;  // null や undefined をチェック
+  return word.charAt(0).toLowerCase() + word.slice(1) + 's';
+}

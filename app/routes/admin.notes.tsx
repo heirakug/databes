@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { NavLink, useLoaderData } from "@remix-run/react";
+import { NavLink, useLoaderData, Outlet, Link } from "@remix-run/react";
 
 import { getAllNote } from "~/models/note.server";
 import { requireUserId } from "~/session.server";
@@ -16,8 +16,13 @@ export default function NotesPage() {
 
   return (
 
+    <main className="flex h-full bg-white">
+        <div className="h-full w-80 border-r bg-gray-50">
+          <Link to="new" className="block p-4 text-xl text-blue-500">
+            + New Note
+          </Link>
 
-        <div>
+          <hr />
 
           {data.noteListItems.length === 0 ? (
             <p className="p-4">No notes yet</p>
@@ -38,5 +43,11 @@ export default function NotesPage() {
             </ol>
           )}
         </div>
+
+        <div className="flex-1 p-6">
+          <Outlet />
+        </div>
+        </main>
+
   );
 }

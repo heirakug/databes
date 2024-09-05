@@ -1,8 +1,10 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useOptionalUser } from "~/utils";
 
 import { prisma } from "~/db.server";
+
+import { pluralize } from "~/utils";
+
 
 
 export const loader = async () => {
@@ -29,7 +31,7 @@ export default function AdminDashboard() {
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {tables.map((table: { name: string }, index: number) => (
       <a
-        href="/admin/notes"
+        href={`/admin/${pluralize(table.name)}`}
         key={index}
         className="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 transition duration-300 ease-in-out"
       >
